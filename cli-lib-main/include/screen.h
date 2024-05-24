@@ -25,46 +25,61 @@
 #define DARKGRAY ESC "[90m"
 #define LIGHTGRAY ESC "[97m"
 
-typedef enum {
-    COLOR_BLACK, COLOR_RED, COLOR_GREEN, COLOR_YELLOW, COLOR_BLUE,
-    COLOR_MAGENTA, COLOR_CYAN, COLOR_WHITE, COLOR_DARKGRAY, COLOR_LIGHTGRAY
+typedef enum
+{
+    COLOR_BLACK,
+    COLOR_RED,
+    COLOR_GREEN,
+    COLOR_YELLOW,
+    COLOR_BLUE,
+    COLOR_MAGENTA,
+    COLOR_CYAN,
+    COLOR_WHITE,
+    COLOR_DARKGRAY,
+    COLOR_LIGHTGRAY
 } ScreenColor;
 
-void screenSetColor(ScreenColor fg, ScreenColor bg) {
-    const char* colors[] = {
-        BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, DARKGRAY, LIGHTGRAY
-    };
+void screenSetColor(ScreenColor fg, ScreenColor bg)
+{
+    const char *colors[] = {
+        BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, DARKGRAY, LIGHTGRAY};
     printf("%s%s", colors[fg], colors[bg - COLOR_BLACK + 40]);
 }
 
-void screenGotoxy(int x, int y) {
+void screenGotoxy(int x, int y)
+{
     printf(ESC "[%d;%dH", y, x);
 }
 
-void screenInit(int useGraphics) {
+void screenInit(int useGraphics)
+{
     printf(CLEARSCREEN);
     printf(HOMECURSOR);
-    if (useGraphics) {
+    if (useGraphics)
+    {
         printf(HIDECURSOR);
     }
 }
 
-
-void screenDestroy() {
+void screenDestroy()
+{
     printf(SHOWCURSOR);
     printf(RESET);
 }
 
-void screenSetTextStyle(const char* style) {
+void screenSetTextStyle(const char *style)
+{
     printf("%s", style);
 }
 
-void screenClear() {
+void screenClear()
+{
     printf(CLEARSCREEN);
     printf(HOMECURSOR);
 }
 
-void screenUpdate() {
+void screenUpdate()
+{
     fflush(stdout);
 }
 

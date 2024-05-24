@@ -4,7 +4,8 @@
 #include <stdbool.h>
 #include <sys/time.h>
 
-typedef struct {
+typedef struct
+{
     struct timeval start_time;
     int interval;
     bool running;
@@ -26,4 +27,4 @@ void timerStart(Timer *timer);
 
 void timerStop(Timer *timer);
 
-#endif 
+#endif

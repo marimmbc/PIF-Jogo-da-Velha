@@ -1,6 +1,38 @@
 #include "screen.h"
 
-void screenDrawBorders() 
+#define BOX_HLINE '-'
+#define BOX_VLINE '|'
+#define BOX_UPLEFT '+'
+#define BOX_UPRIGHT '+'
+#define BOX_DWNLEFT '+'
+#define BOX_DWNRIGHT '+'
+
+#define MINX 0
+#define MINY 0
+#define MAXX 80 // Width of the console window
+#define MAXY 25 // Height of the console window
+
+typedef enum
+{
+    ENUM_BLACK,
+    ENUM_RED,
+    ENUM_GREEN,
+    ENUM_YELLOW,
+    ENUM_BLUE,
+    ENUM_MAGENTA,
+    ENUM_CYAN,
+    ENUM_WHITE,
+    ENUM_LIGHTGRAY,
+    ENUM_LIGHTRED,
+    ENUM_LIGHTGREEN,
+    ENUM_LIGHTYELLOW,
+    ENUM_LIGHTBLUE,
+    ENUM_LIGHTMAGENTA,
+    ENUM_LIGHTCYAN,
+    ENUM_LIGHTWHITE
+} screenColor;
+
+void screenDrawBorders()
 {
     char hbc = BOX_HLINE;
     char vbc = BOX_VLINE;
@@ -11,7 +43,7 @@ void screenDrawBorders()
     screenGotoxy(MINX, MINY);
     printf("%c", BOX_UPLEFT);
 
-    for (int i=MINX+1; i<MAXX; i++)
+    for (int i = MINX + 1; i < MAXX; i++)
     {
         screenGotoxy(i, MINY);
         printf("%c", hbc);
@@ -19,7 +51,7 @@ void screenDrawBorders()
     screenGotoxy(MAXX, MINY);
     printf("%c", BOX_UPRIGHT);
 
-    for (int i=MINY+1; i<MAXY; i++)
+    for (int i = MINY + 1; i < MAXY; i++)
     {
         screenGotoxy(MINX, i);
         printf("%c", vbc);
@@ -29,7 +61,7 @@ void screenDrawBorders()
 
     screenGotoxy(MINX, MAXY);
     printf("%c", BOX_DWNLEFT);
-    for (int i=MINX+1; i<MAXX; i++)
+    for (int i = MINX + 1; i < MAXX; i++)
     {
         screenGotoxy(i, MAXY);
         printf("%c", hbc);
@@ -38,13 +70,13 @@ void screenDrawBorders()
     printf("%c", BOX_DWNRIGHT);
 
     screenBoxDisable();
-
 }
 
 void screenInit(int drawBorders)
 {
     screenClear();
-    if (drawBorders) screenDrawBorders();
+    if (drawBorders)
+        screenDrawBorders();
     screenHomeCursor();
     screenHideCursor();
 }
@@ -58,13 +90,14 @@ void screenDestroy()
     screenShowCursor();
 }
 
-void screenGotoxy(int x, int y) {
+void screenGotoxy(int x, int y)
+{
     x = (x < 0 ? 0 : (x >= MAXX ? MAXX - 1 : x));
     y = (y < 0 ? 0 : (y >= MAXY ? MAXY - 1 : y));
-    printf("%s[%d;%dH", ESC, y + 1, x + 1); 
+    printf("%s[%d;%dH", ESC, y + 1, x + 1);
 }
 
-
-void screenSetColor(screenColor fg, screenColor bg) {
-    printf("%s[%d;%dm", ESC, fg + 30, bg + 40 + (fg > LIGHTGRAY ? 60 : 0)); 
+void screenSetColor(screenColor fg, screenColor bg)
+{
+    printf("%s[%d;%dm", ESC, fg + 30, bg + 40 + (fg > ENUM_LIGHTGRAY ? 60 : 0));
 }

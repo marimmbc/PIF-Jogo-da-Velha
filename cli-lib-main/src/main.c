@@ -18,6 +18,12 @@ char player1[50], player2[50];
 int currentPlayer;
 int pontuacao1 = 0, pontuacao2 = 0;
 
+void timerCallback(void *data)
+{
+    // Função de callback para o timer (placeholder)
+    // Adicione aqui o código que deve ser executado quando o timer expirar
+}
+
 void initializeBoard()
 {
     for (int i = 0; i < 3; ++i)
@@ -29,9 +35,9 @@ void initializeBoard()
     }
 }
 
-
 void freeBoard()
 {
+    // Limpa recursos do tabuleiro, se necessário
 }
 
 void printBoard()
@@ -182,65 +188,74 @@ int askToPlayAgain()
     }
 }
 
-void animateCollision(int row, int col, char symbol) {
+void animateCollision(int row, int col, char symbol)
+{
     int colOffset = (MAXX - BOARD_WIDTH) / 2;
     int rowOffset = 3;
     int x = colOffset + col * 4;
     int y = rowOffset + row * 4;
 
     screenGotoxy(x, y);
-    screenSetColor(WHITE, RED);  // Cor destacada para a colisão
+    screenSetColor(WHITE, RED); // Cor destacada para a colisão
     printf(" %c ", symbol);
     fflush(stdout);
-    usleep(200000);  // Espera 200 ms
+    usleep(200000); // Espera 200 ms
 
     // Restaura o símbolo original
     screenGotoxy(x, y);
-    if (board[row][col] == 'O') {
+    if (board[row][col] == 'O')
+    {
         screenSetColor(MAGENTA, DARKGRAY);
-    } else {
+    }
+    else
+    {
         screenSetColor(MAGENTA, DARKGRAY);
     }
     printf(" %c ", board[row][col]);
     fflush(stdout);
 }
 
-void animateDrop(int row, int col, char symbol) {
+void animateDrop(int row, int col, char symbol)
+{
     int colOffset = (MAXX - BOARD_WIDTH) / 2;
     int rowOffset = 3;
     int x = colOffset + col * 4;
 
-    for (int i = 0; i <= row; ++i) {
+    for (int i = 0; i <= row; ++i)
+    {
         screenGotoxy(x, rowOffset + i * 4);
-        screenSetColor(WHITE, DARKGRAY);  // Cor para o símbolo caindo
+        screenSetColor(WHITE, DARKGRAY); // Cor para o símbolo caindo
         printf(" %c ", symbol);
         fflush(stdout);
-        usleep(100000);  // Espera 100 ms
+        usleep(100000); // Espera 100 ms
 
         // Limpa o traço anterior se não for a posição final
-        if (i < row) {
+        if (i < row)
+        {
             screenGotoxy(x, rowOffset + i * 4);
             printf("   ");
         }
     }
 }
 
-void makeMove(int choice) {
+void makeMove(int choice)
+{
     char symbol = (currentPlayer == 1) ? 'O' : 'X';
     int row = (choice - 1) / 3;
     int col = (choice - 1) % 3;
 
-    if (board[row][col] == ' ') {
-        animateDrop(row, col, symbol);  // Animação de cair
+    if (board[row][col] == ' ')
+    {
+        animateDrop(row, col, symbol); // Animação de cair
         board[row][col] = symbol;
         switchPlayer();
     }
-    else {
-        animateCollision(row, col, symbol);  // Animação de colisão
+    else
+    {
+        animateCollision(row, col, symbol); // Animação de colisão
         printf("Posição já ocupada. Escolha outra.\n");
     }
 }
-
 
 int main()
 {
@@ -248,7 +263,7 @@ int main()
 
     screenInit(1);
     keyboardInit();
-    timerInit(50);
+    timerInit(50, timerCallback); // Supondo que timerInit necessite de um callback e dados
 
     int numPlayers;
     printf("Digite o número de jogadores (1 ou 2): ");
@@ -342,7 +357,6 @@ int main()
                 break;
             }
 
-
             if (!askToPlayAgain())
             {
                 break;
@@ -351,13 +365,10 @@ int main()
 
     } while (1);
 
-
     freeBoard();
 
-
     keyboardDestroy();
-    screenDestroy();
-    timerDestroy();
+    timerDestroy(NULL); // Supondo que não precisa de dados
 
     return 0;
 }
