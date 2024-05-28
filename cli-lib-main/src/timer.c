@@ -1,47 +1,48 @@
 #include "timer.h"
+#include <sys/time.h>
 #include <stdio.h>
 
-void timerInit(Timer *timer, int valueMilliSec)
+static struct timeval timer, now;
+static int delay = -1;
+
+void timerInit(int valueMilliSec)
 {
-    gettimeofday(&timer->start_time, NULL);
-    timer->interval = valueMilliSec;
-    timer->running = true;
+    delay = valueMilliSec;
+    gettimeofday(&timer, NULL);
 }
 
-void timerDestroy(Timer *timer)
+void timerDestroy()
 {
+    delay = -1;
 }
 
-void timerUpdateInterval(Timer *timer, int valueMilliSec)
+void timerUpdateTimer(int valueMilliSec)
 {
-    timer->interval = valueMilliSec;
+    delay = valueMilliSec;
+    gettimeofday(&timer, NULL);
 }
 
-int timerTimeOver(Timer *timer)
+int getTimeDiff()
 {
-    if (!timer->running)
-        return 0;
-
-    struct timeval now, diff;
     gettimeofday(&now, NULL);
-    timersub(&now, &timer->start_time, &diff);
-    int elapsed = diff.tv_sec * 1000 + diff.tv_usec / 1000;
-
-    return elapsed >= timer->interval;
+    long diff = (((now.tv_sec - timer.tv_sec) * 1000000) + now.tv_usec - timer.tv_usec)/1000;
+    return (int) diff;
 }
 
-void timerPrint(const Timer *timer)
+int timerTimeOver()
 {
-    printf("Timer running: %s, Interval: %d ms\n", timer->running ? "Yes" : "No", timer->interval);
+    int ret = 0;
+
+    if (getTimeDiff() > delay)
+    {
+        ret = 1;
+        gettimeofday(&timer, NULL);
+    }
+
+    return ret;
 }
 
-void timerStart(Timer *timer)
+void timerPrint()
 {
-    gettimeofday(&timer->start_time, NULL);
-    timer->running = true;
-}
-
-void timerStop(Timer *timer)
-{
-    timer->running = false;
+    printf("Timer:  %d", getTimeDiff());
 }

@@ -1,86 +1,108 @@
-#ifndef SCREEN_H
-#define SCREEN_H
+#ifndef __SCREEN_H__
+#define __SCREEN_H__
 
 #include <stdio.h>
 
-#define ESC "\033"
-#define RESET ESC "[0m"
-#define BOLD ESC "[1m"
-#define ITALIC ESC "[3m"
-#define BLINK ESC "[5m"
-#define REVERSE ESC "[7m"
-#define CLEARSCREEN ESC "[2J"
-#define HOMECURSOR ESC "[H"
-#define HIDECURSOR ESC "[?25l"
-#define SHOWCURSOR ESC "[?25h"
+// Terminal control sequences
+#define ESC            "\033"
+#define NORMALTEXT     "[0m"
+#define BOLDTEXT       "[1m"
+#define ITALICTEXT     "[3m"
+#define BLINKTEXT      "[5m"
+#define REVERSETEXT    "[7m"
+#define HOMECURSOR     "[f"
+#define SHOWCURSOR     "[?25h"
+#define HIDECURSOR     "[?25l"
+#define CLEARSCREEN    "[2J"
 
-#define BLACK ESC "[30m"
-#define RED ESC "[31m"
-#define GREEN ESC "[32m"
-#define YELLOW ESC "[33m"
-#define BLUE ESC "[34m"
-#define MAGENTA ESC "[35m"
-#define CYAN ESC "[36m"
-#define WHITE ESC "[37m"
-#define DARKGRAY ESC "[90m"
-#define LIGHTGRAY ESC "[97m"
+// BOX Drawing - Unix like terminals
+#define BOX_ENABLE     "(0"
+#define BOX_DISABLE    "(B"
+#define BOX_VLINE      0x78
+#define BOX_HLINE      0x71
+#define BOX_UPLEFT     0x6C
+#define BOX_UPRIGHT    0x6B
+#define BOX_DWNLEFT    0x6D
+#define BOX_DWNRIGHT   0x6A
+#define BOX_CROSS      0x6E
+#define BOX_TLEFT      0X74
+#define BOX_TRIGHT     0X75
+#define BOX_TUP        0X77
+#define BOX_TDOWN      0X76
 
-typedef enum
-{
-    COLOR_BLACK,
-    COLOR_RED,
-    COLOR_GREEN,
-    COLOR_YELLOW,
-    COLOR_BLUE,
-    COLOR_MAGENTA,
-    COLOR_CYAN,
-    COLOR_WHITE,
-    COLOR_DARKGRAY,
-    COLOR_LIGHTGRAY
-} ScreenColor;
+#define BOX_DIAMOND    0x60
+#define BOX_BLOCK      0x61
+#define BOX_DOT        0x7E
 
-void screenSetColor(ScreenColor fg, ScreenColor bg)
-{
-    const char *colors[] = {
-        BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, DARKGRAY, LIGHTGRAY};
-    printf("%s%s", colors[fg], colors[bg - COLOR_BLACK + 40]);
+// screen constants
+#define SCRSTARTX      3      // Initial and final screen positions for the game
+#define SCRENDX        75     // It means the area that can be drawn 
+#define SCRSTARTY      1
+#define SCRENDY        23
+
+#define MINX           1      // min screen horizontal pos
+#define MINY           1      // min screen vertical pos
+#define MAXX           80     // max screen horizontal pos
+#define MAXY           24     // max screen vertical pos
+
+#define BOARD_WIDTH    13     // Board width for the game
+#define BOARD_HEIGHT   7      // Board height for the game
+
+typedef enum {BLACK, RED, GREEN, BROWN, BLUE, MAGENTA, CYAN, LIGHTGRAY,
+        DARKGRAY, LIGHTRED, LIGHTGREEN, YELLOW, LIGHTBLUE, 
+        LIGHTMAGENTA, LIGHTCYAN, WHITE} screenColor; 
+
+static inline void screenHomeCursor() {
+    printf("%s%s", ESC, HOMECURSOR);
 }
 
-void screenGotoxy(int x, int y)
-{
-    printf(ESC "[%d;%dH", y, x);
+static inline void screenShowCursor() {
+    printf("%s%s", ESC, SHOWCURSOR);
 }
 
-void screenInit(int useGraphics)
-{
-    printf(CLEARSCREEN);
-    printf(HOMECURSOR);
-    if (useGraphics)
-    {
-        printf(HIDECURSOR);
-    }
+static inline void screenHideCursor() {
+    printf("%s%s", ESC, HIDECURSOR);
 }
 
-void screenDestroy()
-{
-    printf(SHOWCURSOR);
-    printf(RESET);
+static inline void screenClear() {
+    screenHomeCursor();
+    printf("%s%s", ESC, CLEARSCREEN);
 }
 
-void screenSetTextStyle(const char *style)
-{
-    printf("%s", style);
-}
-
-void screenClear()
-{
-    printf(CLEARSCREEN);
-    printf(HOMECURSOR);
-}
-
-void screenUpdate()
-{
+static inline void screenUpdate() {
     fflush(stdout);
 }
 
-#endif
+static inline void screenSetNormal() {
+    printf("%s%s", ESC, NORMALTEXT);
+}
+
+static inline void screenSetBold() {
+    printf("%s%s", ESC, BOLDTEXT);
+}
+
+static inline void screenSetBlink() {
+    printf("%s%s", ESC, BLINKTEXT);
+}
+
+static inline void screenSetReverse() {
+    printf("%s%s", ESC, REVERSETEXT);
+}
+
+static inline void screenBoxEnable() {
+    printf("%s%s", ESC, BOX_ENABLE);
+}
+
+static inline void screenBoxDisable() {
+    printf("%s%s", ESC, BOX_DISABLE);
+}
+
+void screenInit(int drawBorders);
+void screenDestroy();
+void screenGotoxy(int x, int y);
+void screenSetColor(screenColor fg, screenColor bg);
+
+void drawPiece(char piece, int row, int col);
+void drawPieceTemp(char piece, int row, int col);
+
+#endif /* __SCREEN_H__ */
