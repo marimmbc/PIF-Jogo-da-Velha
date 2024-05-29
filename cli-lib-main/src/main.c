@@ -32,9 +32,9 @@ void clearEndGameMessage() {
     int colOffset = (MAXX - BOARD_WIDTH) / 2;
 
     screenGotoxy(colOffset, MAXY - 2);
-    printf("                          "); // Limpa a linha de mensagem de vencedor
+    printf("                          "); 
     screenGotoxy(colOffset, MAXY - 1);
-    printf("                          "); // Limpa a linha de mensagem de empate
+    printf("                          "); 
     fflush(stdout);
 }
 
@@ -71,14 +71,14 @@ void animacao_queda(int linha, int coluna, char peca) {
         screenGotoxy(colOffset + coluna * 4, rowOffset + i * 2);
         printf(" %c ", peca);
         fflush(stdout);
-        usleep(100000); // Atraso para a animação
-        if (i < linha) { // Limpa a posição anterior se não for a última linha
+        usleep(100000); 
+        if (i < linha) { 
             screenGotoxy(colOffset + coluna * 4, rowOffset + i * 2);
-            printf("   "); // Limpa a posição anterior
+            printf("   "); 
             fflush(stdout);
         }
     }
-    board[linha][coluna] = peca; // Atualiza o tabuleiro
+    board[linha][coluna] = peca; 
 }
 
 void animacao_colisao(int linha, int coluna, char peca) {
@@ -86,13 +86,13 @@ void animacao_colisao(int linha, int coluna, char peca) {
     int colOffset = (MAXX - BOARD_WIDTH) / 2;
     for (int i = 0; i < 3; i++) {
         screenGotoxy(colOffset + coluna * 4, rowOffset + linha * 2);
-        printf(" %c ", ' '); // Limpa a peça temporariamente
+        printf(" %c ", ' '); 
         fflush(stdout);
-        usleep(100000); // Atraso para a animação
+        usleep(100000); 
         screenGotoxy(colOffset + coluna * 4, rowOffset + linha * 2);
-        printf(" %c ", peca); // Desenha a peça novamente
+        printf(" %c ", peca); 
         fflush(stdout);
-        usleep(100000); // Atraso para a animação
+        usleep(100000); 
     }
 }
 
@@ -135,10 +135,10 @@ void makeMove(int choice) {
     int col = (choice - 1) % 3;
 
     if (board[row][col] == ' ') {
-        animacao_queda(row, col, symbol); // Animação de queda
+        animacao_queda(row, col, symbol); 
         switchPlayer();
     } else {
-        animacao_colisao(row, col, board[row][col]); // Animação de colisão
+        animacao_colisao(row, col, board[row][col]); 
         printf("Posição já ocupada. Escolha outra.\n");
     }
 }
@@ -165,29 +165,28 @@ int askToPlayAgain() {
         scanf(" %c", &playAgain);
 
         if (playAgain == 's' || playAgain == 'S') {
-            clearEndGameMessage(); // Limpa a mensagem de fim de jogo antes de reiniciar
-            screenClear(); // Limpa a tela ao reiniciar o jogo
-            return 1; // Reinicializar o jogo
+            clearEndGameMessage(); 
+            screenClear(); 
+            return 1; 
         } else if (playAgain == 'n' || playAgain == 'N') {
             printf("Jogo encerrado. Obrigado por jogar!\n");
-            return 0; // Sair do programa
+            return 0; 
         } else {
             printf("Opção inválida. Digite 'S' para jogar novamente ou 'N' para sair: ");
         }
     }
 }
 
-// Definições das funções `keyboardQuit`, `timerQuit` e `screenQuit`
 void keyboardQuit() {
-    // Código para finalizar o uso do teclado
+    keyboardDestroy();
 }
 
 void timerQuit() {
-    // Código para finalizar o uso do timer
+    timerDestroy();
 }
 
 void screenQuit() {
-    // Código para finalizar o uso da tela
+    screenDestroy();
 }
 
 int main() {
@@ -217,7 +216,7 @@ int main() {
 
     int playAgain;
     do {
-        screenClear(); // Limpa a tela antes de iniciar uma nova partida
+        screenClear(); 
         initializeBoard();
         currentPlayer = 1;
 
@@ -241,7 +240,7 @@ int main() {
                         }
                     } else {
                         printf("Entrada inválida. Escolha um número de 1 a 9.\n");
-                        while (getchar() != '\n'); // Limpar buffer de entrada
+                        while (getchar() != '\n'); 
                     }
                 }
                 makeMove(ch);
@@ -266,7 +265,7 @@ int main() {
 
         printf("Placar: %s %d - %d %s\n", player1, pontuacao1, pontuacao2, player2);
 
-        clearEndGameMessage(); // Limpa a mensagem de fim de jogo antes de reiniciar
+        clearEndGameMessage(); 
 
         playAgain = askToPlayAgain();
     } while (playAgain);
